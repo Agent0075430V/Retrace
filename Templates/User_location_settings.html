@@ -1,0 +1,138 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}Location Settings - Retrace{% endblock %}
+{% block content %}
+<section class="settings-page">
+    <div class="settings-header">
+        <h1>Location Settings</h1>
+        <p>Manage your location preferences and settings</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="settings-content">
+        <div class="settings-card">
+            <h2>Location Preferences</h2>
+            <form method="POST" class="settings-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="default_location">Default Location:</label>
+                    <select id="default_location" name="default_location" class="location-select">
+                        <option value="">Select a default location...</option>
+                        {% for location in locations %}
+                            <option value="{{ location.name }}" 
+                                {% if current_settings.default_location == location.name %}selected{% endif %}>
+                                {{ location.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="help-text">This will be your default location when reporting lost or found items</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="custom_location">Or enter a custom location:</label>
+                    <input type="text" id="custom_location" name="default_location" 
+                           value="{% if current_settings.default_location not in locations|join:',' %}{{ current_settings.default_location }}{% endif %}"
+                           placeholder="Enter your preferred location">
+                    <small class="help-text">You can enter any location name if it's not in the dropdown</small>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="location_notifications" 
+                               {% if current_settings.location_notifications %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                        Receive location-based notifications
+                    </label>
+                    <small class="help-text">Get notified when items are found near your default location</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="icon">💾</span>
+                        Save Location Settings
+                    </button>
+                    <a href="/Users/profile/" class="btn btn-secondary">
+                        <span class="icon">🔙</span>
+                        Back to Profile
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="location-info-card">
+            <h2>Available Locations</h2>
+            <p class="info-text">Here are the locations currently available in the system:</p>
+            
+            {% if locations %}
+                <div class="location-grid">
+                    {% for location in locations %}
+                        <div class="location-item">
+                            <h4>{{ location.name }}</h4>
+                            {% if location.description %}
+                                <p>{{ location.description }}</p>
+                            {% else %}
+                                <p class="no-description">No description available</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-items">No locations have been added to the system yet.</p>
+                <div class="admin-note">
+                    <p><strong>Note:</strong> If you're an administrator, you can add locations through the admin panel.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="location-help-card">
+            <h2>Location Settings Help</h2>
+            <div class="help-content">
+                <div class="help-item">
+                    <h4>🏢 Default Location</h4>
+                    <p>Set your most frequently used location. This will be automatically filled when you report lost or found items.</p>
+                </div>
+                <div class="help-item">
+                    <h4>🔔 Location Notifications</h4>
+                    <p>When enabled, you'll receive notifications when items are found near your default location.</p>
+                </div>
+                <div class="help-item">
+                    <h4>📍 Custom Locations</h4>
+                    <p>You can enter any location name, even if it's not in the predefined list. Be specific for better matching.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Handle the interaction between dropdown and custom input
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdown = document.getElementById('default_location');
+    const customInput = document.getElementById('custom_location');
+    
+    dropdown.addEventListener('change', function() {
+        if (this.value) {
+            customInput.value = '';
+            customInput.disabled = true;
+        } else {
+            customInput.disabled = false;
+        }
+    });
+    
+    customInput.addEventListener('input', function() {
+        if (this.value) {
+            dropdown.value = '';
+            dropdown.disabled = true;
+        } else {
+            dropdown.disabled = false;
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}User Settings - Retrace{% endblock %}
+{% block content %}
+<section class="settings-page">
+    <div class="settings-header">
+        <h1>User Settings</h1>
+        <p>Manage your account information and preferences</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="settings-content">
+        <div class="settings-card">
+            <h2>Account Information</h2>
+            <form method="POST" class="settings-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="{{ user.username }}" readonly class="readonly-field">
+                    <small class="help-text">Username cannot be changed</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" placeholder="Enter your first name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" placeholder="Enter your last name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required placeholder="Enter your email address">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="icon">💾</span>
+                        Save Changes
+                    </button>
+                    <a href="/Users/profile/" class="btn btn-secondary">
+                        <span class="icon">🔙</span>
+                        Back to Profile
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="password-card">
+            <h2>Change Password</h2>
+            <p class="info-text">To change your password, please contact support or use the password reset feature.</p>
+            <div class="password-actions">
+                <a href="#" class="btn btn-outline" onclick="alert('Password reset feature coming soon!')">
+                    <span class="icon">🔐</span>
+                    Reset Password
+                </a>
+            </div>
+        </div>
+
+        <div class="account-info">
+            <h2>Account Details</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Member Since:</strong>
+                    <span>{{ user.date_joined|date:"F d, Y" }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Last Login:</strong>
+                    <span>{{ user.last_login|date:"F d, Y g:i A"|default:"Never" }}</span>
+                </div>
+                <div class="info-item">
+                    <strong>Account Status:</strong>
+                    <span class="status-active">Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

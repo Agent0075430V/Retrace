@@ -1,0 +1,483 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}Search Items - Retrace{% endblock %}
+{% block content %}
+<section class="search-dashboard">
+    <div class="search-header">
+        <h1>🔍 Search Lost & Found Items</h1>
+        <p>Find lost items, discover found items, and track matches in our comprehensive database</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-form-container">
+        <form method="GET" class="search-form">
+            <div class="search-row-1">
+                <div class="search-input-group">
+                    <label for="search-query">🔎 Search Items</label>
+                    <input type="text" id="search-query" name="q" 
+                           value="{{ search_params.q }}" 
+                           placeholder="Enter item name, description, or keywords..."
+                           class="search-input">
+                </div>
+                <div class="search-filter-group">
+                    <label for="item-type">📋 Item Type</label>
+                    <select id="item-type" name="type" class="filter-select">
+                        <option value="all" {% if search_params.type == 'all' %}selected{% endif %}>All Items</option>
+                        <option value="active-lost" {% if search_params.type == 'active-lost' %}selected{% endif %}>Active Lost Items</option>
+                        <option value="lost" {% if search_params.type == 'lost' %}selected{% endif %}>All Lost Items</option>
+                        <option value="found" {% if search_params.type == 'found' %}selected{% endif %}>Found Items Only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-row-2">
+                <div class="search-filter-group">
+                    <label for="location-filter">📍 Location</label>
+                    <select id="location-filter" name="location" class="filter-select">
+                        <option value="">All Locations</option>
+                        {% for location in all_locations %}
+                            <option value="{{ location }}" 
+                                {% if search_params.location == location %}selected{% endif %}>
+                                {{ location }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="search-filter-group">
+                    <label for="date-from">📅 Date From</label>
+                    <input type="date" id="date-from" name="date_from" 
+                           value="{{ search_params.date_from }}" class="date-input">
+                </div>
+                <div class="search-filter-group">
+                    <label for="date-to">📅 Date To</label>
+                    <input type="date" id="date-to" name="date_to" 
+                           value="{{ search_params.date_to }}" class="date-input">
+                </div>
+            </div>
+
+            <div class="search-actions">
+                <button type="submit" class="btn btn-primary search-btn">
+                    <span class="icon">🔍</span>
+                    Search Items
+                </button>
+                <a href="/ai/search/" class="btn btn-secondary clear-btn">
+                    <span class="icon">🔄</span>
+                    Clear Filters
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Statistics Dashboard -->
+    <div class="stats-overview">
+        <h2>📊 Database Overview</h2>
+        <div class="stats-grid">
+            <div class="stat-card lost-stat">
+                <div class="stat-number">{{ stats.total_lost }}</div>
+                <div class="stat-label">Lost Items</div>
+                <div class="stat-icon">📱</div>
+            </div>
+            <div class="stat-card found-stat">
+                <div class="stat-number">{{ stats.total_found }}</div>
+                <div class="stat-label">Found Items</div>
+                <div class="stat-icon">🔍</div>
+            </div>
+            <div class="stat-card matches-stat">
+                <div class="stat-number">{{ stats.total_matches }}</div>
+                <div class="stat-label">Successful Matches</div>
+                <div class="stat-icon">✅</div>
+            </div>
+            <div class="stat-card results-stat">
+                <div class="stat-number">{{ total_results }}</div>
+                <div class="stat-label">Search Results</div>
+                <div class="stat-icon">📋</div>
+            </div>
+        </div>
+    </div>
+
+    {% if search_performed %}
+        <!-- Search Results -->
+        <div class="search-results">
+            <h2>🎯 Search Results</h2>
+            
+            {% if total_results > 0 %}
+                <div class="results-summary">
+                    <p>Found <strong>{{ total_results }}</strong> items matching your search criteria:</p>
+                    {% if search_params.q %}
+                        <span class="search-tag">🔎 "{{ search_params.q }}"</span>
+                    {% endif %}
+                    {% if search_params.location %}
+                        <span class="search-tag">📍 {{ search_params.location }}</span>
+                    {% endif %}
+                    {% if search_params.type != 'all' %}
+                        <span class="search-tag">📋 {{ search_params.type|title }} Items</span>
+                    {% endif %}
+                </div>
+
+                <div class="results-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" onclick="showTab('lost-results')">
+                            📱 Lost Items ({{ lost_items.count }})
+                        </button>
+                        <button class="tab-btn" onclick="showTab('found-results')">
+                            🔍 Found Items ({{ found_items.count }})
+                        </button>
+                        <button class="tab-btn" onclick="showTab('matches-results')">
+                            ✅ Matches ({{ matches.count }})
+                        </button>
+                    </div>
+
+                    <!-- Lost Items Results -->
+                    <div id="lost-results" class="tab-content active">
+                        {% if lost_items %}
+                            <div class="items-grid">
+                                {% for item in lost_items %}
+                                    <div class="item-card lost-item" data-item-id="{{ item.id }}">
+                                        <div class="item-header">
+                                            <h3>{{ item.name }}</h3>
+                                            {% if item.status == 'found' %}
+                                                <span class="item-type-badge found">Found ✓</span>
+                                            {% elif item.status == 'claimed' %}
+                                                <span class="item-type-badge claimed">Claimed ✓</span>
+                                            {% else %}
+                                                <span class="item-type-badge lost">Lost</span>
+                                            {% endif %}
+                                        </div>
+                                        {% if item.image %}
+                                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
+                                        {% else %}
+                                            <div class="no-image">📱 No Image</div>
+                                        {% endif %}
+                                        <div class="item-details">
+                                            <p class="item-description">{{ item.description|truncatechars:100 }}</p>
+                                            <div class="item-meta">
+                                                <span class="meta-item">📍 {{ item.location|default:"Unknown location" }}</span>
+                                                <span class="meta-item">📅 {{ item.date_lost|date:"M d, Y"|default:"Date unknown" }}</span>
+                                                <span class="meta-item">📧 {{ item.email|default:"No contact" }}</span>
+                                                {% if item.status == 'found' %}
+                                                    <span class="meta-item">✅ Found on {{ item.date_found|date:"M d, Y" }}</span>
+                                                {% endif %}
+                                            </div>
+                                            {% if item.status == 'lost' %}
+                                                <div class="item-actions">
+                                                    <button class="btn btn-success mark-found-btn" data-item-id="{{ item.id }}" onclick="showMarkFoundForm('{{ item.id }}')">
+                                                        📍 Mark as Found
+                                                    </button>
+                                                </div>
+                                            {% elif item.status == 'found' %}
+                                                <div class="item-status-info">
+                                                    <p class="status-message">✅ This item has been found and the owner notified.</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="no-results">
+                                <p>No lost items found matching your criteria.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Found Items Results -->
+                    <div id="found-results" class="tab-content">
+                        {% if found_items %}
+                            <div class="items-grid">
+                                {% for item in found_items %}
+                                    <div class="item-card found-item">
+                                        <div class="item-header">
+                                            <h3>{{ item.name }}</h3>
+                                            <span class="item-type-badge found">Found</span>
+                                        </div>
+                                        {% if item.image %}
+                                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
+                                        {% else %}
+                                            <div class="no-image">🔍 No Image</div>
+                                        {% endif %}
+                                        <div class="item-details">
+                                            <p class="item-description">{{ item.description|truncatechars:100 }}</p>
+                                            <div class="item-meta">
+                                                <span class="meta-item">📍 {{ item.location|default:"Unknown location" }}</span>
+                                                <span class="meta-item">📅 {{ item.date_found|date:"M d, Y"|default:"Date unknown" }}</span>
+                                                <span class="meta-item">📧 {{ item.email|default:"No contact" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="no-results">
+                                <p>No found items found matching your criteria.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Matches Results -->
+                    <div id="matches-results" class="tab-content">
+                        {% if matches %}
+                            <div class="matches-list">
+                                {% for match in matches %}
+                                    <div class="match-card">
+                                        <div class="match-header">
+                                            <h3>✅ Match Found!</h3>
+                                            <span class="similarity-score">
+                                                {{ match.similarity_score|floatformat:2 }}% similarity
+                                            </span>
+                                        </div>
+                                        <div class="match-items">
+                                            <div class="match-item lost">
+                                                <h4>📱 Lost: {{ match.lost_product.name }}</h4>
+                                                <p>{{ match.lost_product.description|truncatechars:80 }}</p>
+                                                <small>📍 {{ match.lost_product.location|default:"Unknown" }}</small>
+                                            </div>
+                                            <div class="match-arrow">↔️</div>
+                                            <div class="match-item found">
+                                                <h4>🔍 Found: {{ match.found_product.name }}</h4>
+                                                <p>{{ match.found_product.description|truncatechars:80 }}</p>
+                                                <small>📍 {{ match.found_product.location|default:"Unknown" }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="match-meta">
+                                            <span>⏰ Matched on {{ match.timestamp|date:"M d, Y g:i A" }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="no-results">
+                                <p>No matches found for your search criteria.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-results-main">
+                    <div class="no-results-icon">🔍</div>
+                    <h3>No items found</h3>
+                    <p>Try adjusting your search criteria or clearing some filters.</p>
+                    <div class="suggestions">
+                        <p><strong>Suggestions:</strong></p>
+                        <ul>
+                            <li>Check your spelling and try different keywords</li>
+                            <li>Remove location or date filters</li>
+                            <li>Search for broader terms (e.g., "phone" instead of "iPhone 13")</li>
+                            <li>Try searching in all item types</li>
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <!-- Recent Activity When No Search -->
+        <div class="recent-activity">
+            <h2>⚡ Recent Activity</h2>
+            <div class="activity-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('recent-matches')">
+                        ✅ Recent Matches
+                    </button>
+                </div>
+                
+                <div id="recent-matches" class="tab-content active">
+                    {% if stats.recent_matches %}
+                        <div class="recent-matches-list">
+                            {% for match in stats.recent_matches %}
+                                <div class="recent-match-item">
+                                    <div class="match-info">
+                                        <h4>{{ match.lost_product.name }} ↔️ {{ match.found_product.name }}</h4>
+                                        <p>{{ match.similarity_score|floatformat:2 }}% similarity match</p>
+                                        <small>{{ match.timestamp|timesince }} ago</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-activity">
+                            <p>No recent matches to display.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+        <h2>🚀 Quick Actions</h2>
+        <div class="quick-actions-grid">
+            <a href="/ai/report-lost/" class="quick-action-card lost">
+                <div class="action-icon">📱</div>
+                <h3>Report Lost Item</h3>
+                <p>Lost something? Report it here and we'll help you find it.</p>
+            </a>
+            <a href="/ai/report-found/" class="quick-action-card found">
+                <div class="action-icon">🔍</div>
+                <h3>Report Found Item</h3>
+                <p>Found something? Help someone get their item back.</p>
+            </a>
+            <a href="/ai/all-lost-items/" class="quick-action-card lost">
+                <div class="action-icon">📋</div>
+                <h3>All Lost Items</h3>
+                <p>Browse all reported lost items with detailed information.</p>
+            </a>
+            <a href="/ai/all-found-items/" class="quick-action-card found">
+                <div class="action-icon">📂</div>
+                <h3>All Found Items</h3>
+                <p>Browse all found items waiting to be claimed.</p>
+            </a>
+            <a href="/Users/dashboard/" class="quick-action-card dashboard">
+                <div class="action-icon">📊</div>
+                <h3>My Dashboard</h3>
+                <p>View your personal items and notifications.</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+function showTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Remove active class from all tab buttons
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+
+// Auto-submit form on select change for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    const autoSubmitSelects = document.querySelectorAll('#item-type, #location-filter');
+    autoSubmitSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            // Small delay to allow user to see the selection
+            setTimeout(() => {
+                this.form.submit();
+            }, 100);
+        });
+    });
+});
+
+// Mark as Found functionality
+function showMarkFoundForm(itemId) {
+    // Create modal overlay
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.id = 'mark-found-modal';
+    
+    // Fetch the form HTML
+    fetch(`/ai/mark-found-form/${itemId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                modalOverlay.innerHTML = `
+                    <div class="modal-content">
+                        <span class="modal-close" onclick="closeMarkFoundForm()">&times;</span>
+                        ${data.form_html}
+                    </div>
+                `;
+                document.body.appendChild(modalOverlay);
+                
+                // Add form submit handler
+                const form = document.getElementById(`mark-found-form-${itemId}`);
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    submitMarkFoundForm(itemId, form);
+                });
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load form. Please try again.');
+        });
+}
+
+function closeMarkFoundForm() {
+    const modal = document.getElementById('mark-found-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function submitMarkFoundForm(itemId, form) {
+    const formData = new FormData(form);
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Disable submit button to prevent double submission
+    submitButton.disabled = true;
+    submitButton.textContent = 'Processing...';
+    
+    fetch(`/ai/mark-found/${itemId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            alert(data.message);
+            
+            // Update the item card to show it's been found
+            const itemCard = document.querySelector(`[data-item-id="${itemId}"]`);
+            if (itemCard) {
+                // Update the badge
+                const badge = itemCard.querySelector('.item-type-badge');
+                badge.className = 'item-type-badge found';
+                badge.textContent = 'Found ✓';
+                
+                // Replace the action button with status message
+                const actionsDiv = itemCard.querySelector('.item-actions');
+                if (actionsDiv) {
+                    actionsDiv.innerHTML = `
+                        <div class="item-status-info">
+                            <p class="status-message">✅ This item has been found and the owner notified.</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Close the modal
+            closeMarkFoundForm();
+        } else {
+            alert('Error: ' + data.error);
+            submitButton.disabled = false;
+            submitButton.textContent = 'Mark as Found & Notify Owner';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to mark item as found. Please try again.');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Mark as Found & Notify Owner';
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

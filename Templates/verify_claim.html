@@ -1,0 +1,258 @@
+{% extends "Base.html" %}
+{% load static %}
+
+{% block title %}Verify Claim - Retrace{% endblock %}
+
+{% block content %}
+<style>
+    .verify-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .verify-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e1e8ed;
+    }
+
+    .verify-header h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .item-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .item-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .detail-label {
+        font-weight: bold;
+        color: #34495e;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        color: #7f8c8d;
+    }
+
+    .claimer-info {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .claimer-info h3 {
+        color: #856404;
+        margin-bottom: 15px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-approve {
+        background: #27ae60;
+        color: white;
+    }
+
+    .btn-approve:hover {
+        background: #219a52;
+        transform: translateY(-2px);
+    }
+
+    .btn-reject {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .btn-reject:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+    }
+
+    .warning-box {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .info-box {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .item-image {
+        max-width: 300px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin: 20px auto;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .verify-container {
+            margin: 20px;
+            padding: 15px;
+        }
+
+        .item-details {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="verify-container">
+    <div class="verify-header">
+        <h1>🔍 Verify Item Claim</h1>
+        <p>Someone is claiming to be the owner of your lost item. Please review the details carefully.</p>
+    </div>
+
+    <div class="item-info">
+        <h3>📱 Item Details</h3>
+        {% if lost_item.image %}
+            <img src="{{ lost_item.image.url }}" alt="{{ lost_item.name }}" class="item-image">
+        {% endif %}
+        
+        <div class="item-details">
+            <div class="detail-item">
+                <span class="detail-label">Item Name:</span>
+                <span class="detail-value">{{ lost_item.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Date Lost:</span>
+                <span class="detail-value">{{ lost_item.date_lost|date:"M d, Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Location:</span>
+                <span class="detail-value">{{ lost_item.location|default:lost_item.location_lost }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value">{{ lost_item.get_status_display }}</span>
+            </div>
+        </div>
+        
+        <div class="detail-item">
+            <span class="detail-label">Description:</span>
+            <span class="detail-value">{{ lost_item.description }}</span>
+        </div>
+    </div>
+
+    <div class="claimer-info">
+        <h3>👤 Claim Details</h3>
+        <div class="item-details">
+            <div class="detail-item">
+                <span class="detail-label">Claimer Name:</span>
+                <span class="detail-value">{{ pending_claim.claimer_name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ pending_claim.claimer_email }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value">{{ pending_claim.claimer_phone|default:"Not provided" }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Claim Date:</span>
+                <span class="detail-value">{{ pending_claim.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+        
+        {% if pending_claim.verification_details %}
+        <div class="detail-item" style="margin-top: 15px;">
+            <span class="detail-label">Additional Verification Details:</span>
+            <span class="detail-value">{{ pending_claim.verification_details }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="info-box">
+        <strong>📋 Verification Instructions:</strong><br>
+        Please verify that the person claiming this item is indeed the rightful owner. 
+        Check if the email matches your records and if the additional details provided seem accurate.
+    </div>
+
+    <div class="warning-box">
+        <strong>⚠️ Important:</strong><br>
+        Only approve this claim if you are certain this person is the rightful owner. 
+        False claims can be reported to administrators.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="action-buttons">
+            <button type="submit" name="action" value="approve" class="btn btn-approve" 
+                    onclick="return confirm('Are you sure you want to approve this claim?')">
+                ✅ Approve Claim
+            </button>
+            <button type="submit" name="action" value="reject" class="btn btn-reject"
+                    onclick="return confirm('Are you sure you want to reject this claim?')">
+                ❌ Reject Claim
+            </button>
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px; color: #7f8c8d; font-size: 14px;">
+        This verification link will expire on {{ pending_claim.expires_at|date:"M d, Y H:i" }}
+    </div>
+</div>
+
+{% endblock %}

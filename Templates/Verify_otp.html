@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Retrace</title>
+    <link rel="stylesheet" href="/static/Style.CSS">
+    <style>
+        .verify-otp-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .verify-otp-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .verify-otp-header {
+            margin-bottom: 30px;
+        }
+
+        .verify-otp-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .verify-otp-header p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .email-info {
+            background: #e8f4f8;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .email-info p {
+            margin: 0;
+            color: #0c5460;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5em;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .timer-info {
+            background: #fff3cd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .timer-info p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .timer {
+            font-weight: 600;
+            color: #dc3545;
+        }
+
+        .otp-help {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .otp-help h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .otp-help ul {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .otp-help li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .verify-otp-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .verify-otp-header h1 {
+                font-size: 1.7rem;
+            }
+
+            .otp-input {
+                font-size: 1.3rem;
+                letter-spacing: 0.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-otp-container">
+        <div class="verify-otp-card">
+            <div class="verify-otp-header">
+                <h1>📱 Verify OTP</h1>
+                <p>We've sent a 6-digit code to your email address</p>
+            </div>
+
+            {% if email %}
+            <div class="email-info">
+                <p>📧 OTP sent to: {{ email }}</p>
+            </div>
+            {% endif %}
+
+            <div class="timer-info">
+                <p>⏰ OTP expires in: <span class="timer" id="timer">10:00</span></p>
+            </div>
+
+            <!-- Display messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="otpForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="otp_code">Enter OTP</label>
+                    <input 
+                        type="text" 
+                        class="otp-input" 
+                        id="otp_code" 
+                        name="otp_code" 
+                        placeholder="000000"
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    ✅ Verify OTP
+                </button>
+            </form>
+
+            <a href="/users/resend-otp/" class="btn-secondary">
+                🔄 Resend OTP
+            </a>
+
+            <div class="back-link">
+                <a href="/users/forgot-password/">
+                    ← Start Over
+                </a>
+            </div>
+
+            <div class="otp-help">
+                <h4>💡 Having trouble?</h4>
+                <ul>
+                    <li>Check your email inbox and spam folder</li>
+                    <li>Enter the 6-digit code exactly as received</li>
+                    <li>OTP is case-sensitive (if applicable)</li>
+                    <li>Request a new OTP if the current one expired</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-focus on OTP input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('otp_code').focus();
+        });
+
+        // OTP input formatting
+        document.getElementById('otp_code').addEventListener('input', function(e) {
+            // Only allow numbers
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Auto-submit when 6 digits are entered
+            if (this.value.length === 6) {
+                // Small delay to show the complete OTP
+                setTimeout(() => {
+                    document.getElementById('otpForm').submit();
+                }, 500);
+            }
+        });
+
+        // Countdown timer
+        let timeLeft = 10 * 60; // 10 minutes in seconds
+        const timerElement = document.getElementById('timer');
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                timerElement.textContent = "Expired";
+                timerElement.style.color = "#dc3545";
+                
+                // Disable form
+                document.getElementById('otp_code').disabled = true;
+                document.querySelector('.btn-primary').disabled = true;
+                document.querySelector('.btn-primary').textContent = "OTP Expired";
+                
+                // Show expiry message
+                const expiredMessage = document.createElement('div');
+                expiredMessage.className = 'message error';
+                expiredMessage.textContent = 'OTP has expired. Please request a new one.';
+                document.querySelector('form').insertBefore(expiredMessage, document.querySelector('form').firstChild);
+            } else {
+                timeLeft--;
+            }
+        }
+
+        // Update timer every second
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Initial call
+
+        // Form validation
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            const otp = document.getElementById('otp_code').value.trim();
+            
+            if (!otp) {
+                e.preventDefault();
+                alert('Please enter the OTP.');
+                return;
+            }
+
+            if (otp.length !== 6) {
+                e.preventDefault();
+                alert('OTP must be exactly 6 digits.');
+                return;
+            }
+
+            if (!/^[0-9]+$/.test(otp)) {
+                e.preventDefault();
+                alert('OTP must contain only numbers.');
+                return;
+            }
+        });
+
+        // Paste support for OTP
+        document.getElementById('otp_code').addEventListener('paste', function(e) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const cleanPaste = paste.replace(/[^0-9]/g, '').substring(0, 6);
+            this.value = cleanPaste;
+            
+            if (cleanPaste.length === 6) {
+                setTimeout(() => {
+                    document.getElementById('otpForm').submit();
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>

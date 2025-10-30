@@ -1,0 +1,89 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}Profile - Retrace{% endblock %}
+{% block content %}
+<section class="profile-page">
+    <div class="profile-header">
+        <h1>User Profile</h1>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="profile-content">
+        <div class="profile-card">
+            <div class="profile-info">
+                <h2>Account Information</h2>
+                <div class="info-row">
+                    <strong>Username:</strong> 
+                    <span>{{ user.username }}</span>
+                </div>
+                <div class="info-row">
+                    <strong>Email:</strong> 
+                    <span>{{ user.email }}</span>
+                </div>
+                <div class="info-row">
+                    <strong>First Name:</strong> 
+                    <span>{{ user.first_name|default:"Not set" }}</span>
+                </div>
+                <div class="info-row">
+                    <strong>Last Name:</strong> 
+                    <span>{{ user.last_name|default:"Not set" }}</span>
+                </div>
+                <div class="info-row">
+                    <strong>Member Since:</strong> 
+                    <span>{{ user.date_joined|date:"F d, Y" }}</span>
+                </div>
+                <div class="info-row">
+                    <strong>Last Login:</strong> 
+                    <span>{{ user.last_login|date:"F d, Y g:i A"|default:"Never" }}</span>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <h3>Account Actions</h3>
+                <div class="action-buttons">
+                    <a href="{% url 'user_settings' %}" class="btn btn-primary">
+                        <span class="icon">⚙️</span>
+                        User Settings
+                    </a>
+                    <a href="/Users/dashboard/" class="btn btn-secondary">
+                        <span class="icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'user_location_settings' %}" class="btn btn-secondary">
+                        <span class="icon">📍</span>
+                        Location Settings
+                    </a>
+                    <a href="/Users/logout/" class="btn btn-danger">
+                        <span class="icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Summary -->
+        <div class="activity-summary">
+            <h3>Account Activity</h3>
+            <div class="summary-stats">
+                <div class="summary-item">
+                    <span class="summary-number">{{ user.lostproduct_set.count }}</span>
+                    <span class="summary-label">Lost Items Reported</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-number">{{ user.foundproduct_set.count }}</span>
+                    <span class="summary-label">Found Items Reported</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-number">{{ user.notification_set.count }}</span>
+                    <span class="summary-label">Notifications Received</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

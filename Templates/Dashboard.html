@@ -1,0 +1,161 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}Dashboard - Retrace{% endblock %}
+{% block content %}
+<section class="dashboard">
+    <div class="dashboard-header">
+        <h1>Welcome back, {{ user.username }}!</h1>
+        <p class="user-info">Email: {{ user.email }} | Member since: {{ user.date_joined|date:"M Y" }}</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Quick Stats Cards -->
+    <div class="stats-cards">
+        <div class="stat-card lost-items">
+            <div class="stat-icon">📱</div>
+            <div class="stat-content">
+                <h3>{{ lost_items_count }}</h3>
+                <p>Lost Items</p>
+                <a href="/ai/report-lost/" class="btn btn-primary">Report Lost Item</a>
+            </div>
+        </div>
+        
+        <div class="stat-card found-items">
+            <div class="stat-icon">🔍</div>
+            <div class="stat-content">
+                <h3>{{ found_items_count }}</h3>
+                <p>Found Items</p>
+                <a href="/ai/report-found/" class="btn btn-primary">Report Found Item</a>
+            </div>
+        </div>
+        
+        <div class="stat-card notifications">
+            <div class="stat-icon">🔔</div>
+            <div class="stat-content">
+                <h3>{{ notifications_count }}</h3>
+                <p>Notifications</p>
+                {% if unread_notifications > 0 %}
+                    <span class="badge">{{ unread_notifications }} new</span>
+                {% endif %}
+                <a href="#notifications" class="btn btn-secondary">View All</a>
+            </div>
+        </div>
+        
+        <div class="stat-card profile">
+            <div class="stat-icon">👤</div>
+            <div class="stat-content">
+                <h3>Profile</h3>
+                <p>Manage Account</p>
+                <a href="/Users/profile/" class="btn btn-secondary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="dashboard-content">
+        <div class="activity-section">
+            <h2>Recent Activity</h2>
+            
+            {% if recent_lost_items or recent_found_items %}
+                <div class="activity-grid">
+                    <div class="activity-column">
+                        <h3>Recently Lost Items</h3>
+                        {% if recent_lost_items %}
+                            {% for item in recent_lost_items %}
+                                <div class="activity-item lost">
+                                    <div class="item-info">
+                                        <h4>{{ item.name }}</h4>
+                                        <p>{{ item.description|truncatechars:50 }}</p>
+                                        <small>Lost on {{ item.date_lost|date:"M d, Y" }} at {{ item.location_lost }}</small>
+                                    </div>
+                                    {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-thumb">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-items">No lost items reported yet.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="activity-column">
+                        <h3>Recently Found Items</h3>
+                        {% if recent_found_items %}
+                            {% for item in recent_found_items %}
+                                <div class="activity-item found">
+                                    <div class="item-info">
+                                        <h4>{{ item.name }}</h4>
+                                        <p>{{ item.description|truncatechars:50 }}</p>
+                                        <small>Found on {{ item.date_found|date:"M d, Y" }} at {{ item.location_found }}</small>
+                                    </div>
+                                    {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-thumb">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-items">No found items reported yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Get Started with Retrace</h3>
+                    <p>Start by reporting a lost or found item to help reunite items with their owners.</p>
+                    <div class="quick-actions">
+                        <a href="/ai/report-lost/" class="btn btn-primary">Report Lost Item</a>
+                        <a href="/ai/report-found/" class="btn btn-secondary">Report Found Item</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Notifications Section -->
+        <div class="notifications-section" id="notifications">
+            <h2>Recent Notifications</h2>
+            {% if recent_notifications %}
+                <div class="notifications-list">
+                    {% for notification in recent_notifications %}
+                        <div class="notification-item {% if not notification.is_sent %}unread{% endif %}">
+                            <div class="notification-content">
+                                <p>{{ notification.message }}</p>
+                                <small>{{ notification.sent_at|timesince }} ago</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-items">No notifications yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-bar">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="/ai/report-lost/" class="action-btn lost">
+                <span class="icon">📱</span>
+                <span>Report Lost Item</span>
+            </a>
+            <a href="/ai/report-found/" class="action-btn found">
+                <span class="icon">🔍</span>
+                <span>Report Found Item</span>
+            </a>
+            <a href="/Users/profile/" class="action-btn profile">
+                <span class="icon">👤</span>
+                <span>Edit Profile</span>
+            </a>
+            <a href="/ai/search/" class="action-btn search">
+                <span class="icon">🔎</span>
+                <span>Search Items</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

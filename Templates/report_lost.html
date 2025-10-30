@@ -1,0 +1,23 @@
+{% extends 'Base.html' %}
+{% block title %}Report Lost Item - Retrace{% endblock %}
+{% block content %}
+<section class="report-lost">
+  <h1 class="report-lost-title">Report a Lost Item</h1>
+  <form action="{% url 'report_lost' %}" method="post" class="report-lost-form">
+    {% csrf_token %}
+    <label for="item_name" class="report-lost-label">Item Name:</label>
+    <input type="text" id="item_name" name="item_name" class="report-lost-input" required>
+
+    <label for="description" class="report-lost-label">Description:</label>
+    <textarea id="description" name="description" class="report-lost-textarea" required></textarea>
+
+    <label for="date_lost" class="report-lost-label">Date Lost:</label>
+    <input type="date" id="date_lost" name="date_lost" class="report-lost-input" required>
+
+    <label for="location_lost" class="report-lost-label">Location Lost:</label>
+    <input type="text" id="location_lost" name="location_lost" class="report-lost-input" required>
+
+    <button type="submit" class="report-lost-button">Submit</button>
+  </form>
+</section>
+{% endblock %}  

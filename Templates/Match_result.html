@@ -1,0 +1,17 @@
+{% extends 'Base.html' %}
+{% block content %}
+<section class="matches-page">
+    <h2>AI Match Results</h2>
+    <div class="matches-grid">
+        {% for match in matches %}
+        <div class="match-card">
+            <img src="{{ match.image.url }}" alt="Product Image">
+            <p><strong>{{ match.name }}</strong></p>
+            <p>{{ match.category }}</p>
+            <a href="{% url 'match_detail' match.id %}" class="btn">View Details</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+

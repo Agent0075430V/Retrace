@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{% static 'images/Retrace-removebg-preview (1).png' %}">
+  <link rel="stylesheet" href="{% static 'Style.CSS' %}">
+  <title>{% block title %}Retrace{% endblock %}</title>
+</head>
+<body>
+<header class="header">
+  <div class="header-container">
+    <img src="{% static 'images/Retrace 1.png' %}" alt="Retrace" class="header-text">
+  <div >
+    <a href="{% url 'home' %}" class="header-link">Home</a>
+    <a href="/ai/search/" class="header-link">Search</a>
+    <a href="/ai/all-lost-items/" class="header-link">Lost Items</a>
+    <a href="/ai/all-found-items/" class="header-link">Found Items</a>
+    <a href="/ai/all-claimed-items/" class="header-link">Claimed Items</a>
+    <a href="/Users/about/" class="header-link">About</a>
+    <a href="/Users/contact/" class="header-link">Contact</a>
+    {% if user.is_authenticated %}
+      <a href="/Users/dashboard/" class="header-link">Dashboard</a>
+      <a href="/Users/profile/" class="header-link">Profile</a>
+      <a href="/Users/logout/" class="header-link">Logout</a>
+    {% else %}
+      <a href="/Users/login/" class="header-link">Login</a>
+    {% endif %}
+  </div>
+  </div>  
+</header>
+
+{% block content %}
+<!-- Default content will be overridden by child templates -->
+{% endblock %}
+
+</body>
+</html>

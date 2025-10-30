@@ -1,0 +1,12 @@
+{% extends 'Base.html' %}
+{% block content %}
+<section class="settings-page">
+    <h2>Location Settings</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <label>Default Location:</label>
+        <input type="text" name="location" value="{{ user.profile.location }}">
+        <button type="submit" class="btn">Save</button>
+    </form>
+</section>
+{% endblock %}

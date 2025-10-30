@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Left blank section */
+    .left-section {
+      flex: 1;
+      background-color: #f4f4f4;
+    }
+
+    /* Right sign-in section */
+    .right-section {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+    }
+
+    .signin-box {
+      width: 300px;
+      padding: 18px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .signin-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .signin-box input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #333;
+      border-radius: 5px;
+    }
+
+    .signin-box button {
+      width: 95%;
+      padding: 10px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .signin-box button:hover {
+      background-color: #555;
+    }
+
+    .logo {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 190px;   /* Adjust size */
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Left blank section -->
+  <div class="left-section"></div>
+
+  <!-- Right sign-in section -->
+  <div class="right-section">
+    <img src="logo.jpg" alt="Website Logo" class="logo">
+    <div class="signin-box">
+      <h2>Sign in Here</h2>
+      <input type="text" placeholder="Enter Email/Mobile"><br>
+      <input type="text" placeholder="Enter OTP"><br>
+      <input type="password" placeholder="Set Password"><br>
+      <input type="password" placeholder="Confirm Password"><br>
+      <button type="submit">Sign In</button>
+    </div>
+  </div>
+</body>
+</html>

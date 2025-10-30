@@ -1,0 +1,11 @@
+Django>=5.2.5
+djangorestframework>=3.14
+torch>=2.0
+ftfy
+regex
+transformers
+clip-anytorch
+Pillow
+numpy
+celery>=5.2
+redis>=4.5

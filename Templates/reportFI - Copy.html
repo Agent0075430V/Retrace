@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Lost Item</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: #f4f4f4;
+      padding: 20px;
+      height: 100vh;
+      border-right: 1px solid #ddd;
+    }
+
+    .sidebar h2 {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 10px;
+      margin: 8px 0;
+      text-decoration: none;
+      color: #333;
+      border-radius: 5px;
+    }
+
+    .sidebar a:hover {
+      background: #ddd;
+    }
+
+    .sidebar .settings {
+      margin-top: 30px;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 20px;
+      position: relative;
+    }
+
+    .main h1 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+     .logo {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 200px;   /* Adjust size */
+      height: auto;
+    }
+
+
+    form {
+      max-width: 500px;
+      margin-top: 40px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[type="file"] {
+      border: none;
+    }
+
+    .submit-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      background: #007BFF;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Campus Lost & Found</h2>
+    <a href="#">Dashboard</a>
+    <a href="#">+ Report Lost Item</a>
+    <a href="#">🔍 Report Found Item</a>
+    <a href="#">📄 My Reports</a>
+    <div class="settings">⚙ Settings</div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <img src="logo.jpg" alt="Website Logo" class="logo">
+    <h1>Report Found Item</h1>
+
+    <form>
+      <label for="description">Item Description</label>
+      <textarea id="description" name="description" rows="3"></textarea>
+
+      <label for="location">Location Found</label>
+      <input type="text" id="location" name="location">
+
+      <label for="date">Date Found</label>
+      <input type="date" id="date" name="date">
+
+      <label for="contact">Contact Information</label>
+      <input type="text" id="contact" name="contact">
+
+      <label for="image">Upload Image</label>
+      <input type="file" id="image" name="image">
+
+      <button type="submit" class="submit-btn">Submit Report</button>
+    </form>
+  </div>
+
+</body>
+</html>

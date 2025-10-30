@@ -1,0 +1,30 @@
+{% extends 'Base.html' %}
+{% block title %}Home - Retrace{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Welcome to Retrace</h1>
+    <p class="hero-subtitle">Lost? Let's Retrace.</p>
+    <div class="action-buttons">
+      <a href="{% url 'report_lost' %}" class="btn btn-primary">Report Lost Item</a>
+      <a href="{% url 'report_found' %}" class="btn btn-secondary">Report Found Item</a>
+      <a href="/ai/all-lost-items/" class="btn btn-outline">Browse Lost Items</a>
+      <a href="/ai/all-found-items/" class="btn btn-outline">Browse Found Items</a>
+    </div>
+  </div>
+</section>
+<section class="features">
+  <div class="feature">
+    <h2 class="feature-title">AI-Powered Matching</h2>
+    <p class="feature-description">Our advanced AI technology automatically matches lost and found items using image recognition.</p>
+  </div>
+  <div class="feature">
+    <h2 class="feature-title">Instant Notifications</h2>
+    <p class="feature-description">Get notified immediately when a potential match is found for your lost or found item.</p>
+  </div>
+  <div class="feature">
+    <h2 class="feature-title">Easy Reporting</h2>
+    <p class="feature-description">Simple forms to report lost or found items with photo upload capabilities.</p>
+  </div>
+</section>
+{% endblock %}

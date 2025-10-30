@@ -1,0 +1,56 @@
+{% extends 'Base.html' %}
+{% block title %}Report Found Item - Retrace{% endblock %}
+{% block content %}
+<section class="form-page">
+    <h2>Report Found Product</h2>
+    
+    {% if success %}
+        <div class="alert alert-success">
+            <h3>Success!</h3>
+            <p>Your found item "{{ found_item.name }}" has been reported successfully.</p>
+            {% if matches_found > 0 %}
+                <p><strong>Great news!</strong> We found {{ matches_found }} potential match(es) for your item. The owners will be notified via email.</p>
+            {% else %}
+                <p>No matches found yet, but we'll notify relevant users if any lost items match your description.</p>
+            {% endif %}
+            <a href="{% url 'home' %}" class="btn">Return to Home</a>
+        </div>
+    {% else %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label>Product Name:</label>
+            <input type="text" name="name" required>
+            <label>Category:</label>
+            <input type="text" name="category">
+            <label>Description:</label>
+            <textarea name="description" required></textarea>
+            <label>Date Found:</label>
+            <input type="date" name="date_found" required>
+            <label>Location Found:</label>
+            <input type="text" name="location" required>
+            <label>Email:</label>
+            <input type="email" name="email" required>
+            <label>Phone Number:</label>
+            <input type="text" name="phone_number">
+            <label>Upload Image:</label>
+            <input type="file" name="image" onchange="previewImage(this,'preview')">
+            <img id="preview" src="#" alt="Image Preview" style="display:none; width:150px; margin-top:10px;">
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    {% endif %}
+</section>
+
+<script>
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}Register - Retrace{% endblock %}
+{% block content %}
+<section class="auth-form">
+    <h2>Register</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="POST">
+        {% csrf_token %}
+        <label>Username:</label>
+        <input type="text" name="username" required>
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        <label>Password:</label>
+        <input type="password" name="password1" required>
+        <label>Confirm Password:</label>
+        <input type="password" name="password2" required>
+        <button type="submit" class="btn">Register</button>
+    </form>
+    <p>Already have an account? <a href="/Users/login/">Login here</a></p>
+</section>
+{% endblock %}

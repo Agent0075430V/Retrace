@@ -1,0 +1,30 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% block title %}Login - Retrace{% endblock %}
+{% block content %}
+<section class="login-section">   
+
+    <form method="post" class="container">
+      {% csrf_token %}
+      <h1>Login</h1>
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <label for="Username"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="Username" required>
+
+      <label for="Password"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="Password" required>
+
+      <button type="submit" class="btn">Login</button>
+      
+      <p><a href="/users/forgot-password/">Forgot Password?</a></p>
+      <p><a href="/Users/signup/">Don't have an account? Sign up</a></p>
+    </form>
+  </div>
+</section>
+{% endblock %}

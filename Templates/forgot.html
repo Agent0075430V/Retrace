@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Left empty section */
+    .left-section {
+      flex: 1;
+      background-color: #f4f4f4;
+    }
+
+    /* Right forgot-password section */
+    .right-section {
+      flex: 1;
+      display: flex;
+      justify-content: center;   /* Horizontal center */
+      align-items: center;       /* Vertical center */
+      background-color: #fff;
+    }
+
+    .forgot-box {
+      width: 290px;
+      padding: 18px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      text-align: center;
+      background-color: #fafafa;  /* Light background for visibility */
+    }
+
+    .forgot-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .forgot-box input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #333;
+      border-radius: 5px;
+    }
+
+    .forgot-box button {
+      width: 95%;
+      padding: 10px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .forgot-box button:hover {
+      background-color: #555;
+    }
+    .logo {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 200px;   /* Adjust size */
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Left blank section -->
+  <div class="left-section"></div>
+
+  <!-- Right forgot password section -->
+  <div class="right-section">
+    
+    <div class="forgot-box">
+      <h2>Forgot Password</h2>
+      <input type="text" placeholder="Enter Email/Mobile"><br>
+      <input type="text" placeholder="Enter OTP"><br>
+      <input type="password" placeholder="Reset Password"><br>
+      <input type="password" placeholder="Confirm Password"><br>
+      <button type="submit">Submit</button>
+    </div>
+    <img src="logo.jpg" alt="Website Logo" class="logo">
+  </div>
+</body>
+</html>
